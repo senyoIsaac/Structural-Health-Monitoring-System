@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ structure.name }} - Details</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+        }
+        .back-btn { 
+            display: inline-block; 
+            padding: 8px 16px; 
+            background: #6c757d; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            margin-bottom: 20px; 
+        }
+        .status-normal { 
+            color: green; 
+            font-weight: bold; 
+        }
+        .status-warning { 
+            color: orange; 
+            font-weight: bold; 
+        }
+        .status-critical { 
+            color: red; 
+            font-weight: bold; 
+        }
+        .sensor-data-list { 
+            list-style-type: none; 
+            padding: 0; 
+        }
+        .sensor-data-item { 
+            border-bottom: 1px solid #eee; 
+            padding: 8px 0; 
+        }
+        .critical-reading { 
+            color: red; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-btn">← Back to Dashboard</a>
+    <h1>{{ structure.name }}</h1>
+    
+    <div>
+        <p><strong>Type:</strong> {{ structure.get_type_display }}</p>
+        <p><strong>Location:</strong> {{ structure.location }}</p>
+        <p><strong>Status:</strong> 
+            <span class="status-{{ structure.health_status }}">
+                {{ structure.health_status|title }}
+            </span>
+        </p>
+        <p><strong>Last Updated:</strong> {{ structure.updated_at|date:"M d, Y H:i" }}</p>
+    </div>
+    
+    <h2>Recent Sensor Data</h2>
+    {% if sensor_data %}
+        <ul class="sensor-data-list">
+        {% for data in sensor_data %}
+            <li class="sensor-data-item">
+                <strong>{{ data.timestamp|date:"M d, Y H:i" }}</strong> - 
+                {{ data.get_sensor_type_display }}: 
+                <span class="{% if data.is_critical %}critical-reading{% endif %}">
+                    {{ data.value|floatformat:3 }}
+                </span>
+                {% if data.is_critical %}
+                    <span class="critical-reading"> (CRITICAL)</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No sensor data available for this structure.</p>
+    {% endif %}
+    
+    <div style="margin-top: 30px;">
+        <a href="/api/data/{{ structure.id }}/" class="back-btn" target="_blank">
+            View Raw API Data
+        </a>
+    </div>
+</body>
+</html>
