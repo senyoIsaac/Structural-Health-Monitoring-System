@@ -3,33 +3,13 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
-from .models import Structure, SensorData, EventLogs  # Import your models
+from .models import Structure, SensorData, EventLogs  
 import datetime
-
-"""
-# Temporary simple views to avoid import errors
-def dashboard(request):
-    return HttpResponse("""
-'''<h1>Dashboard - Working!</h1>
-    <p>The dashboard is working. Models will be imported after migrations.</p>
-    <a href="/admin/">Admin Panel</a>'''
-""")
-
-def sensor_data_api(request, structure_id):
-    return JsonResponse({"message": "API endpoint working", "structure_id": structure_id})
-
-def structure_detail(request, structure_id):
-    return HttpResponse(f"Structure detail for ID: {structure_id}")
-
-def event_log(request):
-    return HttpResponse("Event log will be here")   
-    
-"""
 
 @login_required
 def dashboard(request):
-    structures = Structure.objects.all()  # Now Structure is defined
-    latest_events = EventLogs.objects.order_by('-timestamp')[:10]
+    structures = Structure.objects.all()
+    latest_events = EventLogs.objects.order_by('-timestamp')[:10]  
     
     # Add sensor data for each structure
     for structure in structures:
@@ -37,6 +17,7 @@ def dashboard(request):
             structure=structure
         ).order_by('-timestamp')[:5]
     
+    # FIXED: Use proper template path with forward slashes
     return render(request, 'shm/dashboard.html', {
         'structures': structures,
         'latest_events': latest_events
@@ -44,7 +25,7 @@ def dashboard(request):
 
 @login_required
 def structure_detail(request, structure_id):
-    structure = get_object_or_404(Structure, id=structure_id)  # Structure is defined
+    structure = get_object_or_404(Structure, id=structure_id)
     sensor_data = SensorData.objects.filter(
         structure=structure
     ).order_by('-timestamp')[:50]
@@ -86,7 +67,7 @@ def sensor_data_api(request, structure_id):
 
 @login_required
 def event_log(request):
-    events = EventLogs.objects.all().order_by('-timestamp')
+    events = EventLogs.objects.all().order_by('-timestamp')  # Fixed model name
     return render(request, 'shm/event_log.html', {'events': events})
 
 # Helper function

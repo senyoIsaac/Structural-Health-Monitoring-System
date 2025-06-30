@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Structural Health Monitoring Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .header { background: #f4f4f4; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .structures-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .structure-card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+        
+        /* Proper CSS classes for status */
+        .status-normal { color: green; font-weight: bold; }
+        .status-warning { color: orange; font-weight: bold; }
+        .status-critical { color: red; font-weight: bold; }
+        
+        .btn { display: inline-block; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; }
+        .nav { margin-bottom: 20px; }
+        
+        /* Event severity colors */
+        .severity-critical { color: red; }
+        .severity-warning { color: orange; }
+        .severity-info { color: green; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Structural Health Monitoring Dashboard</h1>
+        <div class="nav">
+            <a href="/" class="btn">Dashboard</a>
+            <a href="/events/" class="btn">Event Log</a>
+            <a href="/accounts/logout/" class="btn">Logout</a>
+        </div>
+        <p>Welcome, {{ user.username }}!</p>
+    </div>
+
+    <div class="structures-grid">
+        {% for structure in structures %}
+        <div class="structure-card">
+            <h2>{{ structure.name }}</h2>
+            <p><strong>Type:</strong> {{ structure.get_type_display }}</p>
+            <p><strong>Location:</strong> {{ structure.location }}</p>
+            <p class="status-{{ structure.health_status }}">
+                <strong>Status:</strong> {{ structure.health_status|title }}
+            </p>
+            
+            <h3>Latest Readings:</h3>
+            {% if structure.latest_data %}
+                <ul>
+                {% for data in structure.latest_data %}
+                    <li>{{ data.get_sensor_type_display }}: {{ data.value|floatformat:3 }} 
+                        {% if data.is_critical %}<span class="severity-critical">(CRITICAL)</span>{% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No sensor data available</p>
+            {% endif %}
+            
+            <a href="{% url 'structure_detail' structure.id %}" class="btn">View Details</a>
+        </div>
+        {% empty %}
+        <div class="structure-card">
+            <h2>No Structures Found</h2>
+            <p>No structures have been added to the monitoring system yet.</p>
+            <p><a href="/admin/shm/structure/add/">Add a structure in admin</a></p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if latest_events %}
+    <div style="margin-top: 40px;">
+        <h2>Recent Events</h2>
+        <ul>
+        {% for event in latest_events %}
+            <li style="margin-bottom: 10px;">
+                <strong>{{ event.timestamp|date:"M d, Y H:i" }}:</strong> 
+                {{ event.message }}
+                <span class="severity-{{ event.severity }}">
+                    ({{ event.severity|title }})
+                </span>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</body>
+</html>
