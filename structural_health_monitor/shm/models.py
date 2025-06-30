@@ -16,7 +16,7 @@ class Structure(models.Model):
     health_status = models.CharField(max_length=20, default='normal')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    manager = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    manager = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null= True, blank= True)
     
     def __str__(self):
         return self.name
