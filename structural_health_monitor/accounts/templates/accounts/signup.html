@@ -1,0 +1,85 @@
+<!-- accounts/templates/accounts/signup.html -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Sign Up - Structural Health Monitor</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
+        .auth-form { border: 1px solid #ddd; padding: 25px; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="password"], input[type="email"] { 
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; 
+        }
+        .error { color: red; font-size: 14px; margin-top: 5px; }
+        .btn { background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+        .btn:hover { background-color: #218838; }
+        .login-link { text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="auth-form">
+        <h2>Create Account</h2>
+        
+        {% if form.errors %}
+        <div class="error">
+            Please correct the errors below:
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_username">Username:</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="error">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_email">Email:</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="error">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password1">Password:</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                <div class="error">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password2">Password Confirmation:</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                <div class="error">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="btn">Sign Up</button>
+        </form>
+        
+        <div class="login-link">
+            <p>Already have an account? <a href="/accounts/login/">Login here</a></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,7 +1,6 @@
+# shm/models.py
 from django.db import models
-
-# Create your models here.
-
+from django.conf import settings
 
 class Structure(models.Model):
     STRUCTURE_TYPES = (
@@ -17,6 +16,7 @@ class Structure(models.Model):
     health_status = models.CharField(max_length=20, default='normal')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    manager = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
@@ -34,6 +34,7 @@ class Structure(models.Model):
             self.health_status = 'normal'
         self.save()
 
+
 class SensorData(models.Model):
     SENSOR_TYPES = (
         ('vibration', 'Vibration'),
@@ -47,6 +48,9 @@ class SensorData(models.Model):
     value = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
     
+    def __str__(self):
+        return f"{self.structure.name} - {self.sensor_type}: {self.value}"
+    
     def is_critical(self):
         thresholds = {
             'vibration': 10.0,
@@ -55,3 +59,20 @@ class SensorData(models.Model):
             'displacement': 20.0
         }
         return abs(self.value) > thresholds.get(self.sensor_type, 0)
+
+
+class EventLogs(models.Model):  # Add this missing model
+    SEVERITY_LEVELS = (
+        ('info', 'Info'),
+        ('warning', 'Warning'),
+        ('critical', 'Critical'),
+    )
+    
+    structure = models.ForeignKey(Structure, on_delete=models.CASCADE)
+    message = models.TextField()
+    severity = models.CharField(max_length=10, choices=SEVERITY_LEVELS)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    resolved = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.structure.name} - {self.severity}: {self.message[:50]}"

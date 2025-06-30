@@ -1,0 +1,27 @@
+<!-- accounts/templates/accounts/logout.html -->
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Logged Out - Structural Health Monitor</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; text-align: center; }
+        .message { background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 30px; border-radius: 5px; }
+        .btn { display: inline-block; padding: 10px 20px; margin: 10px; text-decoration: none; color: white; border-radius: 4px; }
+        .btn-primary { background-color: #007bff; }
+        .btn-secondary { background-color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="message">
+        <h2>You have been logged out</h2>
+        <p>Thank you for using the Structural Health Monitoring System.</p>
+        
+        <div style="margin-top: 30px;">
+            <a href="/accounts/login/" class="btn btn-primary">Login Again</a>
+            <a href="/" class="btn btn-secondary">Go to Homepage</a>
+        </div>
+    </div>
+</body>
+</html>
